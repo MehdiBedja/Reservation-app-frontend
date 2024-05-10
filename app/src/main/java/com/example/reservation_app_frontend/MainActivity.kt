@@ -10,20 +10,27 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.reservation_app_frontend.endpoint.parking.parkingEndpoint.Companion.createEndpoint
+import com.example.reservation_app_frontend.repository.parking.ParkingRepository
+import com.example.reservation_app_frontend.screen.parking.ShowParkingList
 import com.example.reservation_app_frontend.ui.theme.Reservation_app_frontendTheme
+import com.example.reservation_app_frontend.viewModel.parking.getParkingsViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             Reservation_app_frontendTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
-                }
+                    // Create an instance of your ViewModel and fetch parkings outside the setContent block
+                    val endpoint = createEndpoint()
+                    val parkingRepository by lazy { ParkingRepository(endpoint) }
+                    val parkingViewModel = getParkingsViewModel.Factory(parkingRepository).create(getParkingsViewModel::class.java)
+                    parkingViewModel.fetchParkings()
+                    ShowParkingList(parkingViewModel)                }
             }
         }
     }

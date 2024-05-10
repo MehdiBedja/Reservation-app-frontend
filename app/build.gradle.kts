@@ -66,4 +66,32 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+
+
+
+
+
+
+
+    val nav_version = "2.7.7"
+
+    implementation("androidx.navigation:navigation-compose:$nav_version")
+
+
+//Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.6.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.6.0")
+    implementation ("com.google.code.gson:gson:2.8.5")
+// Coil
+    implementation("io.coil-kt:coil-compose:2.4.0")
+//Coroutine tests
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.2")
+//MockWebserver
+    testImplementation ("com.squareup.okhttp3:mockwebserver:4.9.1")
+
 }
+
+
+
+
