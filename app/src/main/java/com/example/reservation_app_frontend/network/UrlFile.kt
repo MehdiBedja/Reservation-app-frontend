@@ -1,4 +1,4 @@
 package com.example.reservation_app_frontend.network
 
-val url = "https://23b8-154-121-81-2.ngrok-free.app/"
+val url = "https://0e7b-154-121-84-74.ngrok-free.app/"
 

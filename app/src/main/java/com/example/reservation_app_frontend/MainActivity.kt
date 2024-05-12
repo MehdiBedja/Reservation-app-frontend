@@ -10,19 +10,23 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
 import com.example.reservation_app_frontend.endpoint.parking.parkingEndpoint
 import com.example.reservation_app_frontend.endpoint.parking.parkingEndpoint.Companion.createEndpoint
 import com.example.reservation_app_frontend.endpoint.reservation.ReservationEndpoint
 import com.example.reservation_app_frontend.endpoint.reservation.ReservationEndpoint.Companion.createEndpoint
 import com.example.reservation_app_frontend.endpoint.user.userEndpoint
+import com.example.reservation_app_frontend.navigation.ParkingAppNavigation
 
 import com.example.reservation_app_frontend.repository.parking.ParkingRepository
 import com.example.reservation_app_frontend.repository.reservation.ReservationRepository
 import com.example.reservation_app_frontend.repository.user.AuthRepository
 import com.example.reservation_app_frontend.screen.parking.ShowParkingList
 import com.example.reservation_app_frontend.screen.reservation.ShowReservationList
-import com.example.reservation_app_frontend.screen.user.LoginScreen
+import com.example.reservation_app_frontend.screen.user.LogInScreen
+import com.example.reservation_app_frontend.screen.user.LogInScreen
 import com.example.reservation_app_frontend.screen.user.SignUpScreen
+import com.example.reservation_app_frontend.screen.user.SignUpScreenOld
 import com.example.reservation_app_frontend.ui.theme.Reservation_app_frontendTheme
 import com.example.reservation_app_frontend.viewModel.parking.getParkingsViewModel
 import com.example.reservation_app_frontend.viewModel.reservation.getMyReservationsViewModel
@@ -38,6 +42,18 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+
+//                    val endpoint = userEndpoint.createEndpoint()
+//                    val authRepository = AuthRepository(endpoint)
+////                    val accountViewModel = AccountViewModel.Factory(authRepository).create(AccountViewModel::class.java)
+//                    val accountViewModel = AccountViewModel.getInstance(authRepository)
+
+////////////////////////////////////////////main area, other areas are tests/////////////////////////////////////////////////////
+                    val navController = rememberNavController()
+//                    ParkingAppNavigation(navController, accountViewModel)
+                    ParkingAppNavigation(navController)
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
                   //   Create an instance of your ViewModel and fetch parkings outside the setContent block
 //                    val endpoint = parkingEndpoint.createEndpoint()
 //                    val parkingRepository by lazy { ParkingRepository(endpoint) }
@@ -46,13 +62,13 @@ class MainActivity : ComponentActivity() {
 //                    ShowParkingList(parkingViewModel)
 
 
-                    // SINGNUP
+                    // SINGNUP OLD METHODE WITHOUT NAVIGATION
 //                    val endpoint = userEndpoint.createEndpoint()
 //                    val authRepository = AuthRepository(endpoint)
 //                    val accountViewModel = AccountViewModel.Factory(authRepository).create(AccountViewModel::class.java)
 //
 //                    // Call the signUpUser function with test data
-//                    SignUpScreen(accountViewModel)
+//                    SignUpScreenOld(accountViewModel)
 
 
 
@@ -86,23 +102,25 @@ class MainActivity : ComponentActivity() {
                     //
 
                     //LOGNI
-                    val endpoint = userEndpoint.createEndpoint()
-                    val authRepository = AuthRepository(endpoint)
-                    val loginViewModel = LoginViewModel.Factory(authRepository).create(LoginViewModel::class.java)
+//                    val endpoint = userEndpoint.createEndpoint()
+//                    val authRepository = AuthRepository(endpoint)
+//                    val loginViewModel = LoginViewModel.Factory(authRepository).create(LoginViewModel::class.java)
+//
+//                    LogInScreen(loginViewModel)
 
-                    LoginScreen(loginViewModel)
 
+                    //
+//                    val endpoint = ReservationEndpoint.createEndpoint()
+//                    val reservationRepository by lazy { ReservationRepository(endpoint) }
+//                    val reservationviewModel = getMyReservationsViewModel.Factory(reservationRepository).create(getMyReservationsViewModel::class.java)
+//                    reservationviewModel.fetchReservations()
+//                    ShowReservationList(reservationviewModel)
 
 
                 }
 
 
-//
-//                    val endpoint = ReservationEndpoint.createEndpoint()
-//                    val reservationRepository by lazy { ReservationRepository(endpoint) }
-//                    val reservationviewModel = getMyReservationsViewModel.Factory(reservationRepository).create(getMyReservationsViewModel::class.java)
-//                    reservationviewModel.fetchReservations()
-//                    ShowReservationList(reservationviewModel) }
+
 
 
 
