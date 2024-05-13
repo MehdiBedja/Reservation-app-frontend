@@ -1,6 +1,7 @@
 package com.example.reservation_app_frontend.data.parking
 
 data class Parking(
+    val id : Int ,
     val name : String,
     val description : String,
     val commune_name : String,
@@ -27,4 +28,10 @@ data class ParkingPlace(
     val id: Int,
     val attributes: String,
     val parking: Parking
+)
+
+
+data class ParkingPlaceDTO(
+    val id: Int,
+    val attributes: String
 )

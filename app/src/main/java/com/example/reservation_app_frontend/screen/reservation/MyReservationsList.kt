@@ -17,11 +17,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.example.reservation_app_frontend.data.reservation.Reservation
+import com.example.reservation_app_frontend.screen.navigation.Destination
 import com.example.reservation_app_frontend.viewModel.reservation.getMyReservationsViewModel
 
 @Composable
-fun ShowReservationList(reservationViewModel: getMyReservationsViewModel) {
+fun ShowReservationList(reservationViewModel: getMyReservationsViewModel , navController: NavHostController) {
     AddProgress(reservationViewModel)
 
     Column(
@@ -50,7 +53,7 @@ fun ShowReservationList(reservationViewModel: getMyReservationsViewModel) {
             modifier = Modifier.fillMaxSize()
         ) {
             items(reservationViewModel.reservations) { reservation ->
-                ReservationItem(reservation = reservation)
+                ReservationItem(reservation = reservation, navController, reservationViewModel)
                 Spacer(modifier = Modifier.height(16.dp))
             }
         }
@@ -58,14 +61,20 @@ fun ShowReservationList(reservationViewModel: getMyReservationsViewModel) {
 }
 
 @Composable
-fun ReservationItem(reservation: Reservation) {
+fun ReservationItem(reservation: Reservation , navController: NavController , reservationViewModel: getMyReservationsViewModel) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
             .clip(RoundedCornerShape(topStart = 20.dp, bottomEnd = 20.dp))
             .background(getShadedColorForReservation(reservation))
-            .clickable { /* Handle click event if needed */ }
+            .clickable {
+                reservationViewModel.getReservationById(reservation.id)
+
+                navController.navigate(Destination.oneReservation.createRoute1(reservation.id)) {
+                }
+            }
+
     ) {
         Column(
             modifier = Modifier

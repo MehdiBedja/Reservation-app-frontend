@@ -25,14 +25,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.reservation_app_frontend.network.url
+import com.example.reservation_app_frontend.screen.navigation.Destination
 import com.example.reservation_app_frontend.viewModel.parking.getParkingsViewModel
 
 
 @Composable
-fun ShowParkingList(parkingViewModel: getParkingsViewModel) {
+fun ShowParkingList(parkingViewModel: getParkingsViewModel , navController: NavController) {
 
     AddProgress(parkingViewModel)
     
@@ -45,8 +47,14 @@ fun ShowParkingList(parkingViewModel: getParkingsViewModel) {
                     .padding(6.dp)
                     .background(Color(0xFF84C6E4))
                     .clickable {
+                        parkingViewModel.getParkingById(parking.id)
+
+                        navController.navigate(Destination.OneParking.createRoute(parking.id)) {
+                        }
                     }
-            ) {
+
+            )
+                        {
 val url2 = "static/images/"
                 AsyncImage(
                     model = url+ url2+parking.image,

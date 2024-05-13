@@ -1,3 +1,4 @@
 package com.example.reservation_app_frontend.network
 
-val url = "https://f7d2-154-121-27-65.ngrok-free.app/"
+const val url = "https://dc22-154-121-31-198.ngrok-free.app/"
+

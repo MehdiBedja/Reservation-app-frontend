@@ -17,6 +17,10 @@ class getParkingsViewModel(private val parkingRepository: ParkingRepository): Vi
     var loading = mutableStateOf(false)
     val error = mutableStateOf<String?>(null)
 
+    val parking = mutableStateOf<Parking?>(null)
+    var loading1 = mutableStateOf(false)
+    val error1 = mutableStateOf<String?>(null)
+
     fun fetchParkings(): List<Parking>? {
         loading.value = true // Set loading to true before fetching data
         error.value = null // Clear any previous error messages
@@ -53,6 +57,34 @@ class getParkingsViewModel(private val parkingRepository: ParkingRepository): Vi
         return parkingsData
     }
 
+
+    fun getParkingById(parkingId: Int?) {
+        loading1.value = true // Set loading to true before fetching data
+        error1.value = null // Clear any previous error messages
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = parkingRepository.getParkingById(parkingId)
+                Log.d(TAG, "Response code: ${response.code()}")
+
+                if (response.isSuccessful) {
+
+                    val data = response.body()
+                    parking.value = data
+
+                    Log.d(TAG, "Data received: $data")
+                } else {
+                    error1.value = "Failed to fetch parking: ${response.message()}"
+                    Log.e(TAG, "Failed to fetch parking: ${response.message()}")
+                }
+            } catch (e: Exception) {
+                error1.value = "Failed to fetch parking: ${e.message}"
+                Log.e(TAG, "Failed to fetch parking: ${e.message}")
+            } finally {
+                loading1.value = false
+            }
+        }
+    }
 
     class Factory(private val parkingRepository: ParkingRepository) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
