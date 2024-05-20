@@ -1,6 +1,7 @@
 package com.example.reservation_app_frontend.screen.user
 
 import android.content.ContentValues
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,9 +17,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.reservation_app_frontend.endpoint.user.userEndpoint
@@ -63,31 +67,41 @@ fun SignUpScreenOld(viewModel: AccountViewModel) {
             value = username.value,
             onValueChange = { username.value = it },
             label = { Text("Username") },
-            modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
         )
         TextField(
             value = lastName.value,
             onValueChange = { lastName.value = it },
             label = { Text("Last Name") },
-            modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
         )
         TextField(
             value = firstName.value,
             onValueChange = { firstName.value = it },
             label = { Text("First Name") },
-            modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
         )
         TextField(
             value = phoneNumber.value,
             onValueChange = { phoneNumber.value = it },
             label = { Text("Phone Number") },
-            modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
         )
         TextField(
             value = password.value,
             onValueChange = { password.value = it },
             label = { Text("Password") },
-            modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
         )
 
         // Sign-up button
@@ -102,7 +116,9 @@ fun SignUpScreenOld(viewModel: AccountViewModel) {
                     password = password.value
                 )
             },
-            modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp)
         ) {
             Text(text = "Sign Up")
         }
@@ -123,6 +139,9 @@ fun SignUpScreenOld(viewModel: AccountViewModel) {
 
 @Composable
 fun SignUpScreen(navController: NavHostController) {
+
+    val context = LocalContext.current
+
 
     val endpoint = userEndpoint.createEndpoint()
     val authRepository = AuthRepository(endpoint)
@@ -150,31 +169,41 @@ fun SignUpScreen(navController: NavHostController) {
             value = username.value,
             onValueChange = { username.value = it },
             label = { Text("Username") },
-            modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
         )
         TextField(
             value = lastName.value,
             onValueChange = { lastName.value = it },
             label = { Text("Last Name") },
-            modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
         )
         TextField(
             value = firstName.value,
             onValueChange = { firstName.value = it },
             label = { Text("First Name") },
-            modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
         )
         TextField(
             value = phoneNumber.value,
             onValueChange = { phoneNumber.value = it },
             label = { Text("Phone Number") },
-            modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
         )
         TextField(
             value = password.value,
             onValueChange = { password.value = it },
             label = { Text("Password") },
-            modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
         )
 
         // Sign-up button with navigation action
@@ -190,7 +219,9 @@ fun SignUpScreen(navController: NavHostController) {
                 )
 
             },
-            modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp)
         ) {
             Text(text = "Sign Up")
         }
@@ -210,7 +241,9 @@ fun SignUpScreen(navController: NavHostController) {
         if (viewModel.createdSuccess.value) {
             Log.d(ContentValues.TAG, "time to go to login page!!!!!!")
             LaunchedEffect(Unit) {
+
                 navController.navigate(Destination.LogIn.route)
+
             }
         }
     }
@@ -264,45 +297,85 @@ fun SignUpScreen(navController: NavHostController) {
 
 
 @Composable
-fun LogInScreen( navController: NavHostController) {
+fun LogInScreen(navController: NavHostController, onLoginSuccess: () -> Unit) {
+
+    val context = LocalContext.current
+
+    var username by remember { mutableStateOf(TextFieldValue()) }
+    var password by remember { mutableStateOf(TextFieldValue()) }
+
+    LaunchedEffect(key1 = true) {
+        val savedUsername = getSavedUsername(context)
+        val savedPassword = getSavedPassword(context)
+
+        if (!savedUsername.isNullOrBlank() && !savedPassword.isNullOrBlank()) {
+            // Automatically fill in the email and password fields
+            username = TextFieldValue(savedUsername)
+            password = TextFieldValue(savedPassword)
+
+            Log.d("Username", "Stored username: ${username.text}")
+
+
+            // Attempt automatic login
+            attemptLogin(context, savedUsername, savedPassword, onLoginSuccess)
+        }
+    }
+
+
 
 
     val endpoint = userEndpoint.createEndpoint()
     val authRepository = AuthRepository(endpoint)
-//    val viewModel = LoginViewModel.Factory(authRepository).create(LoginViewModel::class.java)
     val viewModel = LoginViewModel.getInstance(authRepository)
 
     val logged by viewModel.token
 
-
-    val username = remember { mutableStateOf("") }
-    val password = remember { mutableStateOf("") }
+    var usernameInput by remember { mutableStateOf("") }
+    var passwordInput by remember { mutableStateOf("") }
 
     Column(modifier = Modifier.padding(16.dp)) {
-        // Input fields for email and password
+        // Input fields for username and password
         TextField(
-            value = username.value,
-            onValueChange = { username.value = it },
+            value = usernameInput,
+            onValueChange = { usernameInput = it },
             label = { Text("Username") },
             modifier = Modifier.fillMaxWidth()
         )
         TextField(
-            value = password.value,
-            onValueChange = { password.value = it },
+            value = passwordInput,
+            onValueChange = { passwordInput = it },
             label = { Text("Password") },
-            modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
         )
 
         // Login button with navigation action
         Button(
             onClick = {
-                viewModel.loginUser(username.value, password.value)
-//
+                viewModel.loginUser(usernameInput, passwordInput)
             },
-            modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp)
         ) {
             Text(text = "Login")
         }
+
+        Button(
+            onClick = {
+                navController.navigate(Destination.SignUp.route)
+
+            } ,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp)
+        )
+        {
+            Text(text = "Sign up ")
+
+
+            }
 
         // Show loading indicator and error message if applicable
         if (viewModel.loading.value) {
@@ -318,10 +391,44 @@ fun LogInScreen( navController: NavHostController) {
 
         if (viewModel.token.value != null) {
             LaunchedEffect(Unit) {
-//                navController.navigate(Destination.ListOfParkings.route)
+                saveCredentials(context, usernameInput, passwordInput)
+                onLoginSuccess()
             }
         }
+    }
 
 
+}
+
+private fun saveCredentials(context: Context, username: String, password: String) {
+    val sharedPreferences = context.getSharedPreferences("user_credentials", Context.MODE_PRIVATE)
+    val editor = sharedPreferences.edit()
+    editor.putString("username", username)
+    editor.putString("password", password)
+    editor.apply()
+}
+
+private fun getSavedUsername(context: Context): String? {
+    val sharedPreferences = context.getSharedPreferences("user_credentials", Context.MODE_PRIVATE)
+    return sharedPreferences.getString("username", null)
+}
+
+private fun getSavedPassword(context: Context): String? {
+    val sharedPreferences = context.getSharedPreferences("user_credentials", Context.MODE_PRIVATE)
+    return sharedPreferences.getString("password", null)
+}
+
+private fun attemptLogin(context: Context, username: String, password: String, onLoginSuccess: () -> Unit) {
+    // Check for correct credentials
+    val savedUsername = getSavedUsername(context)
+    val savedPassword = getSavedPassword(context)
+
+    if (username == savedUsername && password == savedPassword) {
+        // Successful login, call the onLoginSuccess callback
+        onLoginSuccess()
+    } else {
+        // Incorrect credentials, show an error message or handle as needed
+        // For simplicity, we can just print an error message
+        println("Incorrect credentials")
     }
 }

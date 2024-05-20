@@ -12,6 +12,10 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -19,11 +23,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.reservation_app_frontend.screen.parking.LogoutButton
 import com.example.reservation_app_frontend.screen.parking.OneParking
 import com.example.reservation_app_frontend.screen.parking.ShowParkingList
 import com.example.reservation_app_frontend.screen.reservation.OneReservation
 import com.example.reservation_app_frontend.screen.reservation.ShowReservationList
+import com.example.reservation_app_frontend.screen.user.LogInScreen
 import com.example.reservation_app_frontend.screen.user.ShowProfile
+import com.example.reservation_app_frontend.screen.user.SignUpScreen
 import com.example.reservation_app_frontend.viewModel.parking.getParkingsViewModel
 import com.example.reservation_app_frontend.viewModel.reservation.AddReservationViewModel
 import com.example.reservation_app_frontend.viewModel.reservation.getMyReservationsViewModel
@@ -35,6 +42,9 @@ fun MainScreen(reservationsViewModel: getMyReservationsViewModel ,reservationVie
                reservationModel: getAllReservationModel, parkingViewModel: getParkingsViewModel ,
                navController: NavHostController
                 , context: Context) {
+
+    var currentDestination by remember { mutableStateOf("LogIn") }
+
     val items = listOf(
         Destination.ShowParkingList,
         Destination.ShowReservationList,
@@ -75,7 +85,25 @@ fun MainScreen(reservationsViewModel: getMyReservationsViewModel ,reservationVie
             }
         }
     ) { innerPadding ->
-        NavHost(navController, startDestination = Destination.ShowParkingList.route, Modifier.padding(innerPadding)) {
+        NavHost(navController, startDestination = Destination.LogIn.route, Modifier.padding(innerPadding)) {
+
+            composable(Destination.LogIn.route) {
+                LogInScreen(navController = navController , onLoginSuccess = {
+                    currentDestination = "Parkings List"
+                    navController.navigate("Parkings List")
+
+
+                })
+            }
+            composable(Destination.SignUp.route) {
+//            SignUpScreen(navController = navController, viewModel= viewModel)
+                SignUpScreen(navController = navController)
+            }
+
+
+            composable(Destination.LogoutButton.route) { LogoutButton(navController,context) }
+
+
             composable(Destination.ShowParkingList.route) { ShowParkingList(parkingViewModel , navController) }
             composable(Destination.OneParking.route) {navBack ->
                 val id = navBack?.arguments?.getString("userId")?.toInt()
@@ -89,6 +117,7 @@ fun MainScreen(reservationsViewModel: getMyReservationsViewModel ,reservationVie
             }
 
             composable(Destination.ShowProfile.route) { ShowProfile() }
+
             composable(Destination.AddReservationScreen.route) { AddReservationScreen(reservationModel ,reservationViewModel,context, navController ) }
 
         }

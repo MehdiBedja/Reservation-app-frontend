@@ -1,10 +1,8 @@
 package com.example.reservation_app_frontend.screen.parking
 
 import android.content.Context
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,12 +20,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import coil.compose.AsyncImage
 import com.example.reservation_app_frontend.network.url
 import com.example.reservation_app_frontend.screen.navigation.Destination
@@ -37,10 +36,15 @@ import com.example.reservation_app_frontend.viewModel.parking.getParkingsViewMod
 fun ShowParkingList(parkingViewModel: getParkingsViewModel , navController: NavController) {
 
     AddProgress(parkingViewModel)
-    
-    
+
+
+
+    val context = LocalContext.current
+
+
 
     LazyColumn {
+
         items(parkingViewModel.parkings) { parking ->
             Row(
                 modifier = Modifier
@@ -87,6 +91,13 @@ val url2 = "static/images/"
             }
         }
     }
+    Column (
+        modifier = Modifier
+            .fillMaxSize()
+    ){
+        LogoutButton(navController,context)
+
+    }
 
 }
 
@@ -101,5 +112,31 @@ fun AddProgress(parkingViewModel: getParkingsViewModel) {
         ) {
             CircularProgressIndicator()
         }
+    }
+}
+
+fun clearUsername(context: Context) {
+    val sharedPreferences = context.getSharedPreferences("user_credentials", Context.MODE_PRIVATE)
+    with(sharedPreferences.edit()) {
+        remove("username")
+        apply()
+    }
+}
+
+
+
+@Composable
+fun LogoutButton(navController: NavController, context: Context) {
+    Button(onClick = {
+        clearUsername(context)
+        navController.navigate(Destination.ShowReservationList.route) {
+            popUpTo(navController.graph.findStartDestination().id) {
+                saveState = true
+            }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }) {
+        Text("Logout")
     }
 }

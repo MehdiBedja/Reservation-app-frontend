@@ -9,10 +9,9 @@ import retrofit2.Response
 
 class ReservationRepository(private val endpoint: ReservationEndpoint) {
 
-    suspend fun getMyReservations(): Response<List<Reservation>> {
-        return endpoint.getAllReservations()
+    suspend fun getMyReservations(username: String): Response<List<Reservation>> {
+        return endpoint.getAllReservations(username)
     }
-
     suspend fun createReservation(reservationDTO: ReservationDTO) {
         endpoint.createReservation(reservationDTO)
     }

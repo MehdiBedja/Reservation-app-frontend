@@ -13,6 +13,15 @@ sealed class Destination(val route : String) {
     }
     object ShowProfile:Destination ("My Profile")
 
+    object LogoutButton:Destination ("Logout")
+
+
+    object LogIn:Destination("LogIn")
+    object SignUp:Destination("SignUp")
+    object ListOfParkings:Destination("List_Of_Parkings")
+
+
+
     object Profile:Destination("profile")
     object Details:Destination("details/{userId}") {
         fun createRoute(userId:Int) = "details/$userId"

@@ -2,7 +2,9 @@ package com.example.reservation_app_frontend
 
 import AddReservationScreen
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -14,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.reservation_app_frontend.endpoint.parking.parkingEndpoint
 import com.example.reservation_app_frontend.endpoint.reservation.ReservationEndpoint
 import com.example.reservation_app_frontend.navigation.ParkingAppNavigation
+import com.example.reservation_app_frontend.network.initializeUsername
 
 import com.example.reservation_app_frontend.repository.parking.ParkingRepository
 import com.example.reservation_app_frontend.repository.reservation.ReservationRepository
@@ -27,8 +30,7 @@ import com.example.reservation_app_frontend.viewModel.reservation.getMyReservati
 import getAllReservationModel
 
 
-
-class MainActivity : ComponentActivity() {
+class MainActivity2 : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -37,6 +39,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+
+
 
 //                    val endpoint = userEndpoint.createEndpoint()
 //                    val authRepository = AuthRepository(endpoint)
@@ -126,7 +130,7 @@ class MainActivity : ComponentActivity() {
 
 
 
-class MainActivity2 : ComponentActivity() {
+class MainActivity : ComponentActivity() {
     @SuppressLint("SuspiciousIndentation")
     @OptIn(ExperimentalFoundationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -140,6 +144,7 @@ class MainActivity2 : ComponentActivity() {
                     // Create an instance of your ViewModel and fetch parkings outside the setContent block
 
 
+                    initializeUsername(this)
 
 
 

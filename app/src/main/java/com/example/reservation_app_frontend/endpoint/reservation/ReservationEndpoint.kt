@@ -4,6 +4,7 @@ import com.example.reservation_app_frontend.data.parking.Parking
 import com.example.reservation_app_frontend.data.reservation.Reservation
 import com.example.reservation_app_frontend.data.reservation.ReservationDTO
 import com.example.reservation_app_frontend.data.reservation.ReservationDTO2
+import com.example.reservation_app_frontend.network.Globals.savedUsername
 import com.example.reservation_app_frontend.network.url
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -15,8 +16,8 @@ import retrofit2.http.Path
 
 
 interface ReservationEndpoint {
-    @GET("reservations/myReservations/1/") // Update the endpoint URL as needed
-    suspend fun getAllReservations(): Response<List<Reservation>>
+    @GET("reservations/myReservations/{username}/") // Update the endpoint URL as needed
+    suspend fun getAllReservations(@Path("username") username: String): Response<List<Reservation>>
 
 
     @POST("reservations/addReservation/") // Include the trailing slash

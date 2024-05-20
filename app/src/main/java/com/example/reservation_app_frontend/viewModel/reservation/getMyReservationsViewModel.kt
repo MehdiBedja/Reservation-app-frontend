@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.reservation_app_frontend.data.parking.Parking
 import com.example.reservation_app_frontend.data.reservation.Reservation
 import com.example.reservation_app_frontend.data.reservation.ReservationDTO2
+import com.example.reservation_app_frontend.network.Globals
 import com.example.reservation_app_frontend.repository.parking.ParkingRepository
 import com.example.reservation_app_frontend.repository.reservation.ReservationRepository
 import com.example.reservation_app_frontend.viewModel.parking.getParkingsViewModel
@@ -25,14 +26,15 @@ class getMyReservationsViewModel(private val reservationRepository: ReservationR
     var loading1 = mutableStateOf(false)
     val error1 = mutableStateOf<String?>(null)
 
-
     fun fetchReservations() {
         loading.value = true // Set loading to true before fetching data
         error.value = null // Clear any previous error messages
 
+        val username = Globals.savedUsername ?: return // Handle null case if necessary
+
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val response = reservationRepository.getMyReservations()
+                val response = reservationRepository.getMyReservations(username)
                 Log.d(TAG, "Response code: ${response.code()}")
 
                 if (response.isSuccessful) {
@@ -42,7 +44,6 @@ class getMyReservationsViewModel(private val reservationRepository: ReservationR
                     reservations.clear()
                     data?.let {
                         reservations.addAll(it)
-
                     }
                 } else {
                     error.value = "Failed to fetch reservations: ${response.message()}"
@@ -56,8 +57,6 @@ class getMyReservationsViewModel(private val reservationRepository: ReservationR
             }
         }
     }
-
-
 
     fun getReservationById(reservationId: Int?) {
         loading1.value = true // Set loading to true before fetching data
@@ -74,18 +73,17 @@ class getMyReservationsViewModel(private val reservationRepository: ReservationR
 
                     Log.d(TAG, "Data received: $data")
                 } else {
-                    error.value = "Failed to fetch reservation: ${response.message()}"
+                    error1.value = "Failed to fetch reservation: ${response.message()}"
                     Log.e(TAG, "Failed to fetch reservation: ${response.message()}")
                 }
             } catch (e: Exception) {
-                error.value = "Failed to fetch reservation: ${e.message}"
+                error1.value = "Failed to fetch reservation: ${e.message}"
                 Log.e(TAG, "Failed to fetch reservation: ${e.message}")
             } finally {
-                loading.value = false
+                loading1.value = false
             }
         }
     }
-
 
     class Factory(private val reservationRepository: ReservationRepository) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
