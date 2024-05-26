@@ -1,5 +1,7 @@
 package com.example.reservation_app_frontend.screen.reservation
 
+import AppDatabase
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,9 +27,16 @@ import com.example.reservation_app_frontend.repository.reservation.ReservationRe
 import com.example.reservation_app_frontend.viewModel.reservation.getMyReservationsViewModel
 
 @Composable
-fun OneReservation(reservationId: Int? ) {
+fun OneReservation(reservationId: Int?
+    //     , appDatabase: AppDatabase
+) {
+
+
     val endpoint = ReservationEndpoint.createEndpoint()
-    val reservationRepository by lazy { ReservationRepository(endpoint) }
+    val reservationRepository by lazy { ReservationRepository(endpoint
+        //    , appDatabase
+    ) }
+
     val reservationViewModel = getMyReservationsViewModel.Factory(reservationRepository).create(getMyReservationsViewModel::class.java)
 
     val reservation by remember { reservationViewModel.reservation }

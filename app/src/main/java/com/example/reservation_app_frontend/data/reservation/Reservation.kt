@@ -27,7 +27,7 @@ data class Notification(
 
 
 data class ReservationDTO(
-    val user: Int,
+    val user: Int?,
     val parking_place: Int,
     val entry_datetime: String?,
     val exit_datetime: String?,

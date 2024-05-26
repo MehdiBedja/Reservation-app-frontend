@@ -11,14 +11,13 @@ sealed class Destination(val route : String) {
     object oneReservation:Destination ("d/{reservationId}")  {
         fun createRoute1(reservationId:Int) = "d/$reservationId"
     }
-    object ShowProfile:Destination ("My Profile")
+    object UserProfileScreen:Destination ("My Profile")
 
     object LogoutButton:Destination ("Logout")
 
 
     object LogIn:Destination("LogIn")
     object SignUp:Destination("SignUp")
-    object ListOfParkings:Destination("List_Of_Parkings")
 
 
 

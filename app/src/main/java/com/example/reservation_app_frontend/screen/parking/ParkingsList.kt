@@ -1,6 +1,7 @@
 package com.example.reservation_app_frontend.screen.parking
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -29,6 +30,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import coil.compose.AsyncImage
 import com.example.reservation_app_frontend.network.url
 import com.example.reservation_app_frontend.screen.navigation.Destination
+import com.example.reservation_app_frontend.screen.user.LogoutButton
 import com.example.reservation_app_frontend.viewModel.parking.getParkingsViewModel
 
 
@@ -91,11 +93,11 @@ val url2 = "static/images/"
             }
         }
     }
-    Column (
-        modifier = Modifier
-            .fillMaxSize()
+    Button (
+       onClick = { navController.navigate(Destination.LogoutButton.route) }
     ){
-        LogoutButton(navController,context)
+        
+    Text(text = "LogOut ")
 
     }
 
@@ -125,18 +127,3 @@ fun clearUsername(context: Context) {
 
 
 
-@Composable
-fun LogoutButton(navController: NavController, context: Context) {
-    Button(onClick = {
-        clearUsername(context)
-        navController.navigate(Destination.ShowReservationList.route) {
-            popUpTo(navController.graph.findStartDestination().id) {
-                saveState = true
-            }
-            launchSingleTop = true
-            restoreState = true
-        }
-    }) {
-        Text("Logout")
-    }
-}

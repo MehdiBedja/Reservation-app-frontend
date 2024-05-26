@@ -9,26 +9,34 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.compose.rememberNavController
-import com.example.reservation_app_frontend.navigation.Destination
+import com.example.reservation_app_frontend.data.parking.Parking
+import com.example.reservation_app_frontend.data.user.User
 import com.example.reservation_app_frontend.repository.user.AuthRepository
+import com.example.reservation_app_frontend.repository.user.UserPreferences
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okhttp3.internal.isSensitiveHeader
 
 //
 
 
 
-private fun saveCredentials(context: Context, username: String, password: String) {
-    val sharedPreferences = context.getSharedPreferences("user_credentials", MODE_PRIVATE)
-    val editor = sharedPreferences.edit()
-    editor.putString("username", username)
-    editor.putString("password", password)
-    editor.apply()
-}
 
-class AccountViewModel(private val authRepository: AuthRepository) : ViewModel() {
+
+class AccountViewModel(private val authRepository: AuthRepository ) : ViewModel() {
     var loading = mutableStateOf(false)
     val error = mutableStateOf<String?>(null)
     val createdSuccess=mutableStateOf(false)
+
+    val login = mutableStateOf(false)
+    val logout = mutableStateOf(false)
+
+
+
+
+
+
 
 
     fun signUpUser(
@@ -91,11 +99,48 @@ class AccountViewModel(private val authRepository: AuthRepository) : ViewModel()
 }
 
 
-class LoginViewModel(private val authRepository: AuthRepository) : ViewModel() {
+class LoginViewModel(private val authRepository: AuthRepository  ,  private val userPreferences: UserPreferences) : ViewModel() {
 
     var loading = mutableStateOf(false)
     val error = mutableStateOf<String?>(null)
     val token = mutableStateOf<String?>(null)
+
+
+    val login = mutableStateOf(false)
+    val logout = mutableStateOf(false)
+
+    fun isConnected() = userPreferences.isConnected()
+
+    fun logout() {
+        userPreferences.updateValues(false,-1)
+        logout.value = true
+        login.value = false
+
+    }
+
+    val user = mutableStateOf<User?>(null) // Add a mutable state for the user
+    var loading1 = mutableStateOf(false)
+    val error1 = mutableStateOf<String?>(null)
+
+    fun getUser(userId: Int) {
+        loading1.value = true
+        error1.value = null
+
+        viewModelScope.launch {
+            try {
+                val response = authRepository.getUser(userId)
+                if (response.isSuccessful) {
+                    user.value = response.body()
+                } else {
+                    error.value = "Failed to fetch user: ${response.message()}"
+                }
+            } catch (e: Exception) {
+                error.value = "Failed to fetch user: ${e.message}"
+            } finally {
+                loading.value = false
+            }
+        }
+    }
 
     fun loginUser(email: String, password: String) {
         loading.value = true
@@ -111,7 +156,16 @@ class LoginViewModel(private val authRepository: AuthRepository) : ViewModel() {
                     token.value = tokenValue // Save the token in the token variable
                     Log.d(ContentValues.TAG, "Login successful. Token: ${token.value}")
 
-//                    saveCredentials(context, username, userId )
+
+                    val userIdString = jsonResponse?.user?.id
+                    val userId = userIdString // Convert to Int, or null if conversion fails
+
+                    if (userId != null) {
+                        userPreferences.updateValues(true,userId)
+                    }
+                    login.value = true
+                    logout.value = false
+
                 } else {
                     error.value = "Failed to login: ${response.message()}"
                     Log.e(ContentValues.TAG, "Failed to login: ${response.message()}")
@@ -138,9 +192,9 @@ class LoginViewModel(private val authRepository: AuthRepository) : ViewModel() {
         @Volatile
         private var instance: LoginViewModel? = null
 
-        fun getInstance(authRepository: AuthRepository): LoginViewModel {
+        fun getInstance(authRepository: AuthRepository, userPreferences: UserPreferences): LoginViewModel {
             return instance ?: synchronized(this) {
-                instance ?: LoginViewModel(authRepository).also { instance = it }
+                instance ?: LoginViewModel(authRepository, userPreferences).also { instance = it }
             }
         }
     }

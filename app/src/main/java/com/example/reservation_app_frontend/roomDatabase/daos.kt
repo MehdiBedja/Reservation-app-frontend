@@ -1,7 +1,9 @@
 // DaoInterfaces.kt
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
 @Dao
@@ -51,11 +53,11 @@ interface ParkingPlaceDao {
 
 @Dao
 interface ReservationDao {
-    @Insert
-    fun insertReservation(reservation: ReservationEntity)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertReservation(reservation: ReservationEntity)
 
     @Query("SELECT * FROM ReservationEntity")
-    fun getAllReservation(): List<ReservationEntity>
+    fun getAllReservations(): LiveData<List<ReservationEntity>>
 }
 
 @Dao

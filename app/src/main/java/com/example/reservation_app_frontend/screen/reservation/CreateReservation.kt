@@ -21,9 +21,10 @@ import androidx.navigation.NavHostController
 import com.example.reservation_app_frontend.data.parking.Parking
 import com.example.reservation_app_frontend.data.parking.ParkingPlace
 import com.example.reservation_app_frontend.data.reservation.ReservationDTO
+import com.example.reservation_app_frontend.network.Globals.savedUsername
 import com.example.reservation_app_frontend.viewModel.reservation.AddReservationViewModel
+import com.example.reservation_app_frontend.viewModel.reservation.getMyReservationsViewModel
 import com.vanpra.composematerialdialogs.MaterialDialog
-import com.vanpra.composematerialdialogs.MaterialDialogState
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.datetime.time.timepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
@@ -37,6 +38,7 @@ fun AddReservationScreen(
     getAllReservationsViewModel: getAllReservationModel,
     addReservationViewModel: AddReservationViewModel ,
     context: Context ,
+    reservationviewModel : getMyReservationsViewModel,
     navController: NavHostController
 ) {
     var isContextMenuVisible by rememberSaveable {
@@ -293,6 +295,8 @@ fun AddReservationScreen(
         }
     }
 
+
+    val userId = savedUsername
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -302,7 +306,7 @@ fun AddReservationScreen(
         Button(
             onClick = {
                 val reservationDTO = ReservationDTO(
-                    user = 1, // Assuming you have a userId variable
+                    user = userId, // Assuming you have a userId variable
                     parking_place = selectedParkingPlace?.id ?: -1, // Default to -1 if selectedParkingPlace is null
                     entry_datetime = formattedDate, // Example valid datetime format
                     exit_datetime = formattedTime, // Example valid datetime format
@@ -310,7 +314,8 @@ fun AddReservationScreen(
                     reservation_code = reservationCode
                 )
                 addReservationViewModel.addReservation(reservationDTO)
-            },
+                reservationviewModel.fetchReservations()
+                      },
             modifier = Modifier
                 .padding(vertical = 8.dp)
                 .sizeIn(minHeight = 36.dp, maxHeight = 48.dp) // Adjust the size as needed

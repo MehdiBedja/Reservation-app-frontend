@@ -38,7 +38,6 @@ data class User(
     val first_name: String?,
     val phone_number: String?,
     val date_of_birth: String?,
-    val location: String?,
     val date_joined: String?,
     val profile_picture: String?
 )

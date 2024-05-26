@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "716503667630",
+    "project_id": "projet-tdm-601b6",
+    "storage_bucket": "projet-tdm-601b6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:716503667630:android:b76c05ad9475989bd0ae3f",
+        "android_client_info": {
+          "package_name": "com.example.reservation_app_frontend"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfBDmcdtBYngXmsQs8nVeOXQp0LkfMBp0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,11 +1,15 @@
 package com.example.reservation_app_frontend.screen.navigation
 
 import AddReservationScreen
+import AppDatabase
 import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -23,32 +27,63 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.reservation_app_frontend.screen.parking.LogoutButton
+import com.example.reservation_app_frontend.endpoint.parking.parkingEndpoint
+import com.example.reservation_app_frontend.endpoint.reservation.ReservationEndpoint
+import com.example.reservation_app_frontend.network.Globals
+import com.example.reservation_app_frontend.repository.parking.ParkingRepository
+import com.example.reservation_app_frontend.repository.reservation.ReservationRepository
 import com.example.reservation_app_frontend.screen.parking.OneParking
 import com.example.reservation_app_frontend.screen.parking.ShowParkingList
 import com.example.reservation_app_frontend.screen.reservation.OneReservation
 import com.example.reservation_app_frontend.screen.reservation.ShowReservationList
 import com.example.reservation_app_frontend.screen.user.LogInScreen
+import com.example.reservation_app_frontend.screen.user.LogoutButton
 import com.example.reservation_app_frontend.screen.user.ShowProfile
 import com.example.reservation_app_frontend.screen.user.SignUpScreen
+import com.example.reservation_app_frontend.screen.user.UserProfileScreen
 import com.example.reservation_app_frontend.viewModel.parking.getParkingsViewModel
 import com.example.reservation_app_frontend.viewModel.reservation.AddReservationViewModel
 import com.example.reservation_app_frontend.viewModel.reservation.getMyReservationsViewModel
+import com.example.reservation_app_frontend.viewModel.user.LoginViewModel
 import getAllReservationModel
 
 @ExperimentalFoundationApi
 @Composable
-fun MainScreen(reservationsViewModel: getMyReservationsViewModel ,reservationViewModel: AddReservationViewModel ,
-               reservationModel: getAllReservationModel, parkingViewModel: getParkingsViewModel ,
-               navController: NavHostController
-                , context: Context) {
+fun MainScreen(
+    navController: NavHostController
+    , context: Context,
+    startDestination: String,
+    userViewModel: LoginViewModel ,
+    //   appDatabase: AppDatabase
+)
+{
 
-    var currentDestination by remember { mutableStateOf("LogIn") }
+    val endpoint = parkingEndpoint.createEndpoint()
+    val parkingRepository by lazy { ParkingRepository(endpoint) }
+    val parkingViewModel = getParkingsViewModel.Factory(parkingRepository).create(getParkingsViewModel::class.java)
+    parkingViewModel.fetchParkings()
+
+
+    val reservationViewModelAll = getAllReservationModel.Factory(parkingRepository).create(getAllReservationModel::class.java)
+    reservationViewModelAll.fetchParkings()
+
+
+
+
+
+    val endpoint2 = ReservationEndpoint.createEndpoint()
+    val reservationRepository by lazy { ReservationRepository(endpoint2
+        //    , appDatabase
+    ) }
+    val addReservationViewModel = AddReservationViewModel.Factory(reservationRepository).create(AddReservationViewModel::class.java)
+    val reservationviewModel = getMyReservationsViewModel.Factory(reservationRepository).create(getMyReservationsViewModel::class.java)
+
+    reservationviewModel.fetchReservations()
 
     val items = listOf(
         Destination.ShowParkingList,
         Destination.ShowReservationList,
-        Destination.ShowProfile,
+        Destination.UserProfileScreen,
         Destination.AddReservationScreen
     )
 
@@ -62,63 +97,75 @@ fun MainScreen(reservationsViewModel: getMyReservationsViewModel ,reservationVie
                     val selected = currentDestination?.hierarchy?.any { it.route == des.route } == true
                     NavigationBarItem(
                         icon = {
-                            // You can set different icons for each screen here
-                            // For example, Icons.Filled.Favorite for Ecran1
-                            Icon(Icons.Filled.Home, contentDescription = null)
-                        },
-                        label = {
-                            // You can set different labels for each screen here
-                            Text(text = des.route)
+                            when (des) {
+                                Destination.ShowParkingList -> Icon(Icons.Filled.Person, contentDescription = null) // Replace with appropriate icon
+                                Destination.ShowReservationList -> Icon(Icons.Filled.List, contentDescription = null) // Replace with appropriate icon
+                                Destination.UserProfileScreen -> Icon(Icons.Filled.Person, contentDescription = null) // Replace with appropriate icon
+                                Destination.AddReservationScreen -> Icon(Icons.Filled.Create, contentDescription = null) // Replace with appropriate icon
+                                else -> {}
+                            }
                         },
                         selected = selected,
                         onClick = {
+                            if (des == Destination.ShowReservationList) {
+                                reservationviewModel.fetchReservations() }
+                            if (des == Destination.UserProfileScreen) {
+                                Globals.savedUsername?.let { userViewModel.getUser(it) }
+                            }
+
                             navController.navigate(des.route) {
                                 popUpTo(navController.graph.findStartDestination().id) {
                                     saveState = true
                                 }
+
                                 launchSingleTop = true
                                 restoreState = true
                             }
+
+
+
                         }
                     )
                 }
             }
         }
     ) { innerPadding ->
-        NavHost(navController, startDestination = Destination.LogIn.route, Modifier.padding(innerPadding)) {
-
-            composable(Destination.LogIn.route) {
-                LogInScreen(navController = navController , onLoginSuccess = {
-                    currentDestination = "Parkings List"
-                    navController.navigate("Parkings List")
+        NavHost(navController, startDestination = startDestination, Modifier.padding(innerPadding)) {
 
 
-                })
+            composable(Destination.LogoutButton.route) {
+                LogoutButton(navController = navController , userViewModel)
+
             }
+
+
             composable(Destination.SignUp.route) {
-//            SignUpScreen(navController = navController, viewModel= viewModel)
                 SignUpScreen(navController = navController)
             }
 
+            composable(Destination.LogIn.route) {
+                LogInScreen(navController = navController, userViewModel)
+            }
 
-            composable(Destination.LogoutButton.route) { LogoutButton(navController,context) }
 
 
-            composable(Destination.ShowParkingList.route) { ShowParkingList(parkingViewModel , navController) }
+            composable(Destination.ShowParkingList.route) { ShowParkingList(parkingViewModel , navController)  }
             composable(Destination.OneParking.route) {navBack ->
                 val id = navBack?.arguments?.getString("userId")?.toInt()
                 OneParking(id)
             }
 
-            composable(Destination.ShowReservationList.route) { ShowReservationList(reservationsViewModel , navController ) }
+            composable(Destination.ShowReservationList.route) { ShowReservationList(reservationviewModel , navController ) }
             composable(Destination.oneReservation.route) {navBack ->
                 val id = navBack?.arguments?.getString("reservationId")?.toInt()
-                OneReservation(id)
+                OneReservation(id
+                    //  , appDatabase
+                )
             }
 
-            composable(Destination.ShowProfile.route) { ShowProfile() }
+            composable(Destination.UserProfileScreen.route) { UserProfileScreen(userViewModel,navController) }
 
-            composable(Destination.AddReservationScreen.route) { AddReservationScreen(reservationModel ,reservationViewModel,context, navController ) }
+            composable(Destination.AddReservationScreen.route) { AddReservationScreen(reservationViewModelAll ,addReservationViewModel, context,reservationviewModel , navController ) }
 
         }
     }

@@ -6,13 +6,10 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.reservation_app_frontend.data.parking.Parking
 import com.example.reservation_app_frontend.data.reservation.Reservation
 import com.example.reservation_app_frontend.data.reservation.ReservationDTO2
 import com.example.reservation_app_frontend.network.Globals
-import com.example.reservation_app_frontend.repository.parking.ParkingRepository
 import com.example.reservation_app_frontend.repository.reservation.ReservationRepository
-import com.example.reservation_app_frontend.viewModel.parking.getParkingsViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

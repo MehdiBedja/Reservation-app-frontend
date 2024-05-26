@@ -16,8 +16,8 @@ import retrofit2.http.Path
 
 
 interface ReservationEndpoint {
-    @GET("reservations/myReservations/{username}/") // Update the endpoint URL as needed
-    suspend fun getAllReservations(@Path("username") username: String): Response<List<Reservation>>
+    @GET("reservations/myReservations/{id}/") // Update the endpoint URL as needed
+    suspend fun getAllReservations(@Path("id") id: Int): Response<List<Reservation>>
 
 
     @POST("reservations/addReservation/") // Include the trailing slash

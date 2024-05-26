@@ -3,6 +3,7 @@ package com.example.reservation_app_frontend.repository.user
 import com.example.reservation_app_frontend.data.user.LoginRequest
 import com.example.reservation_app_frontend.data.user.LoginResponse
 import com.example.reservation_app_frontend.data.user.SignUpRequest
+import com.example.reservation_app_frontend.data.user.User
 import com.example.reservation_app_frontend.data.user.User_signUp
 import com.example.reservation_app_frontend.endpoint.user.userEndpoint
 import okhttp3.ResponseBody
@@ -39,6 +40,10 @@ class AuthRepository(private val endpoint: userEndpoint) {
             password = password
         )
         return endpoint.login(loginRequest)
+    }
+
+    suspend fun getUser(userId : Int) : Response<User> {
+        return endpoint.getUser(userId)
     }
 
 

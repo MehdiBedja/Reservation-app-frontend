@@ -3,6 +3,7 @@
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import com.example.reservation_app_frontend.data.reservation.ReservationDTO
 
 @Entity(tableName = "ParkingEntity")
 data class ParkingEntity(
@@ -40,18 +41,27 @@ data class ParkingPlaceEntity(
     val parking_id: Int
 )
 
-@Entity(tableName = "ReservationEntity", foreignKeys = [ForeignKey(entity = CustomUserEntity::class, parentColumns = ["id"], childColumns = ["user_id"], onDelete = ForeignKey.CASCADE),
-    ForeignKey(entity = ParkingPlaceEntity::class, parentColumns = ["id"], childColumns = ["parking_place_id"], onDelete = ForeignKey.CASCADE)])
+@Entity(tableName = "ReservationEntity")
 data class ReservationEntity(
-    @PrimaryKey val id: Int,
-    val user_id: Int,
-    val parking_place_id: Int?,
-    val reservation_date: String?,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val user: Int?,
+    val parking_place: Int,
     val entry_datetime: String?,
     val exit_datetime: String?,
     val payment_status: String?,
-    val reservation_code: String?
-)
+    val reservation_code: String?,
+    var isSynced: Boolean = false // Added field for offline insertion tracking
+) {
+    // Optional constructor to create ReservationEntity from ReservationDTO
+    constructor(reservationDTO: ReservationDTO) : this(
+        user = reservationDTO.user,
+        parking_place = reservationDTO.parking_place,
+        entry_datetime = reservationDTO.entry_datetime,
+        exit_datetime = reservationDTO.exit_datetime,
+        payment_status = reservationDTO.payment_status,
+        reservation_code = reservationDTO.reservation_code
+    )
+}
 
 @Entity(tableName = "NotificationEntity", foreignKeys = [ForeignKey(entity = CustomUserEntity::class, parentColumns = ["id"], childColumns = ["user_id"], onDelete = ForeignKey.CASCADE)])
 data class NotificationEntity(
