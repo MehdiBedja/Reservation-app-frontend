@@ -6,6 +6,8 @@ data class Parking(
     val description: String,
     val commune_name: String,
     val image: String,
+    val latitude: Double?,
+    val longitude: Double?
 
 )
 
