@@ -82,6 +82,10 @@ fun OneParking(parkingId: Int?) {
                     }
 
                     Text(text = "Commune: ${it.commune_name}", style = MaterialTheme.typography.labelMedium)
+                  //  Text(text = "Commune: ${it.latitude}", style = MaterialTheme.typography.labelMedium)
+                   // Text(text = "Commune: ${it.longitude}", style = MaterialTheme.typography.labelMedium)
+
+
                     // You can add more details or customize the layout as needed
                 }
             }
