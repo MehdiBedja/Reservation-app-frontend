@@ -1,19 +1,15 @@
 package com.example.reservation_app_frontend.viewModel.reservation
 
-import ReservationEntity
 import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.reservation_app_frontend.data.reservation.ReservationDTO
-import com.example.reservation_app_frontend.data.reservation.Reservation
 import com.example.reservation_app_frontend.repository.reservation.ReservationRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 class AddReservationViewModel(private val reservationRepository: ReservationRepository) : ViewModel() {
 
@@ -48,7 +44,7 @@ class AddReservationViewModel(private val reservationRepository: ReservationRepo
     //    fun addReservationOffline(reservationDTO: ReservationDTO) {
     //       CoroutineScope(Dispatchers.IO).launch {
     //        try {
-    //            val reservationEntity = ReservationEntity(reservationDTO)
+    //            val reservationEntity = com.example.reservation_app_frontend.roomDatabase.ReservationEntity(reservationDTO)
     //            reservationRepository.createReservationOffline(reservationEntity)
     //            reservationAdded.value = true
     //        } catch (e: Exception) {
@@ -61,7 +57,7 @@ class AddReservationViewModel(private val reservationRepository: ReservationRepo
     //  }
 
     // Offline reservation retrieval
-    //   fun getAllReservationsOffline(): LiveData<List<ReservationEntity>> {
+    //   fun getAllReservationsOffline(): LiveData<List<com.example.reservation_app_frontend.roomDatabase.ReservationEntity>> {
     //       return reservationRepository.getAllReservationsOffline()
     //   }
     //  companion object {

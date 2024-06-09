@@ -1,65 +1,30 @@
 package com.example.reservation_app_frontend
 
-import AppDatabase
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
-import com.example.reservation_app_frontend.endpoint.parking.parkingEndpoint
-import com.example.reservation_app_frontend.endpoint.reservation.ReservationEndpoint
 import com.example.reservation_app_frontend.endpoint.user.userEndpoint
 import com.example.reservation_app_frontend.network.initializeUsername
 import com.example.reservation_app_frontend.preferences.Preferences
-
-import com.example.reservation_app_frontend.repository.parking.ParkingRepository
-import com.example.reservation_app_frontend.repository.reservation.ReservationRepository
 import com.example.reservation_app_frontend.repository.user.AuthRepository
 import com.example.reservation_app_frontend.repository.user.UserPreferences
+import com.example.reservation_app_frontend.roomDatabase.DatabaseManager
+import com.example.reservation_app_frontend.roomDatabase.ReservationEntity
 import com.example.reservation_app_frontend.screen.navigation.MainScreen
 import com.example.reservation_app_frontend.ui.theme.Reservation_app_frontendTheme
-import com.example.reservation_app_frontend.viewModel.parking.getParkingsViewModel
-import com.example.reservation_app_frontend.viewModel.reservation.AddReservationViewModel
-import com.example.reservation_app_frontend.viewModel.reservation.getMyReservationsViewModel
 import com.example.reservation_app_frontend.viewModel.user.LoginViewModel
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.MapProperties
-import com.google.maps.android.compose.MapType
-import com.google.maps.android.compose.MapUiSettings
-import com.google.maps.android.compose.MarkerInfoWindow
-import com.google.maps.android.compose.MarkerState
-import com.google.maps.android.compose.rememberCameraPositionState
-import getAllReservationModel
-
-
-
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class MainActivity : ComponentActivity() {
@@ -69,10 +34,35 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalFoundationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
         // Get the application context and pass it to getInstance
-        //   val appContext = applicationContext
-        //    Log.d("MainActivity", "AppContext: $appContext")
-        //    val database = AppDatabase.getInstance(appContext)
+           val appContext = applicationContext
+            Log.d("MainActivity", "AppContext: $appContext")
+
+
+
+
+        DatabaseManager.initialize(appContext)
+
+
+/*        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                DatabaseManager.reservationDao.insertReservation(
+                    ReservationEntity(
+                        1,
+                        2
+                    )
+                )
+
+            }
+        }*/
+
+
+
+
+
+
         setContent {
             Reservation_app_frontendTheme {
                 Surface(

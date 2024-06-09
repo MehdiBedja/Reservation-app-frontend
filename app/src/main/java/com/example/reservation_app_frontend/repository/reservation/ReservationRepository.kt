@@ -1,15 +1,9 @@
 package com.example.reservation_app_frontend.repository.reservation
 
-import AppDatabase
-import ReservationDao
-import ReservationEntity
-import androidx.lifecycle.LiveData
 import com.example.reservation_app_frontend.data.reservation.Reservation
 import com.example.reservation_app_frontend.data.reservation.ReservationDTO
 import com.example.reservation_app_frontend.data.reservation.ReservationDTO2
 import com.example.reservation_app_frontend.endpoint.reservation.ReservationEndpoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import retrofit2.Response
 
 class ReservationRepository(private val endpoint: ReservationEndpoint
@@ -30,14 +24,14 @@ class ReservationRepository(private val endpoint: ReservationEndpoint
         return endpoint.getReservation(id)
     }
 
- //   suspend fun createReservationOffline(reservationEntity: ReservationEntity) {
+ //   suspend fun createReservationOffline(reservationEntity: com.example.reservation_app_frontend.roomDatabase.ReservationEntity) {
     //       withContext(Dispatchers.IO) {
     //           reservationDao.insertReservation(reservationEntity)
     //       }
     //   }
 
     // Offline operation
-    //   fun getAllReservationsOffline(): LiveData<List<ReservationEntity>> {
+    //   fun getAllReservationsOffline(): LiveData<List<com.example.reservation_app_frontend.roomDatabase.ReservationEntity>> {
     // //       return reservationDao.getAllReservations()
     //   }
 }

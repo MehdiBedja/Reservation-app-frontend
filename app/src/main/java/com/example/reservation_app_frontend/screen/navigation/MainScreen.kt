@@ -1,7 +1,6 @@
 package com.example.reservation_app_frontend.screen.navigation
 
 import AddReservationScreen
-import AppDatabase
 import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.padding
