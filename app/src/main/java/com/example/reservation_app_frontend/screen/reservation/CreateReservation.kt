@@ -22,6 +22,7 @@ import com.example.reservation_app_frontend.data.parking.Parking
 import com.example.reservation_app_frontend.data.parking.ParkingPlace
 import com.example.reservation_app_frontend.data.reservation.ReservationDTO
 import com.example.reservation_app_frontend.network.Globals.savedUsername
+import com.example.reservation_app_frontend.roomDatabase.ReservationEntity
 import com.example.reservation_app_frontend.viewModel.reservation.AddReservationViewModel
 import com.example.reservation_app_frontend.viewModel.reservation.getMyReservationsViewModel
 import com.vanpra.composematerialdialogs.MaterialDialog
@@ -83,9 +84,9 @@ fun AddReservationScreen(
         modifier = Modifier
             .padding(16.dp)
             .fillMaxSize()
-            .padding(horizontal = 16.dp , vertical = 50.dp),
+            .padding(horizontal = 16.dp, vertical = 50.dp),
 
-    horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
@@ -204,7 +205,6 @@ fun AddReservationScreen(
         }
 
 
-
         // Make Reservation button
 
 
@@ -232,6 +232,9 @@ fun AddReservationScreen(
     }
 
 
+
+
+
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -251,7 +254,7 @@ fun AddReservationScreen(
             Text(text = "Pick time")
         }
         Text(text = formattedTime)
-    }
+
     MaterialDialog(
         dialogState = dateDialogState,
         buttons = {
@@ -269,7 +272,7 @@ fun AddReservationScreen(
             initialDate = LocalDate.now(),
             title = "Pick a date",
 
-        ) {
+            ) {
             pickedDate = it
         }
     }
@@ -296,26 +299,59 @@ fun AddReservationScreen(
     }
 
 
+
+
+
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
     val userId = savedUsername
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp , vertical = 200.dp),
+            .padding(horizontal = 16.dp, vertical = 200.dp),
         contentAlignment = Alignment.BottomCenter
     ) {
         Button(
             onClick = {
                 val reservationDTO = ReservationDTO(
                     user = userId, // Assuming you have a userId variable
-                    parking_place = selectedParkingPlace?.id ?: -1, // Default to -1 if selectedParkingPlace is null
-                    entry_datetime = formattedDate, // Example valid datetime format
-                    exit_datetime = formattedTime, // Example valid datetime format
+                    parking_place = selectedParkingPlace?.id
+                        ?: -1, // Default to -1 if selectedParkingPlace is null
+                    entry_datetime = formattedDate + formattedDate, // Example valid datetime format
+                    exit_datetime = formattedDate + formattedDate, // Example valid datetime format
                     payment_status = paymentStatus,
                     reservation_code = reservationCode
                 )
                 addReservationViewModel.addReservation(reservationDTO)
                 reservationviewModel.fetchReservations()
-                      },
+
+
+                val reservationEntity = ReservationEntity(
+                    user = userId, // Assuming you have a userId variable
+                    parking_place = selectedParkingPlace?.attributes ?:"default",  // Default to -1 if selectedParkingPlace is null
+                    entry_datetime = formattedDate + formattedDate , // Example valid datetime format
+                    exit_datetime = formattedDate + formattedDate, // Example valid datetime format
+                    payment_status = paymentStatus,
+                    reservation_code = reservationCode
+                )
+
+                addReservationViewModel.insertReservation(reservationEntity)
+                reservationviewModel.getReservationsOffline()
+
+
+            },
             modifier = Modifier
                 .padding(vertical = 8.dp)
                 .sizeIn(minHeight = 36.dp, maxHeight = 48.dp) // Adjust the size as needed
@@ -325,9 +361,4 @@ fun AddReservationScreen(
     }
 
 
-
 }
-
-
-
-

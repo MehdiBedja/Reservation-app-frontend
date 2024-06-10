@@ -12,7 +12,9 @@ object DatabaseManager {
             context.applicationContext,
             ParkingDatabase::class.java,
             "parkingDatabase"
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
 

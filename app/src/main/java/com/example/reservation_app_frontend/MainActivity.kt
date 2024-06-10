@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import com.example.reservation_app_frontend.endpoint.user.userEndpoint
 import com.example.reservation_app_frontend.network.initializeUsername
@@ -18,7 +17,6 @@ import com.example.reservation_app_frontend.preferences.Preferences
 import com.example.reservation_app_frontend.repository.user.AuthRepository
 import com.example.reservation_app_frontend.repository.user.UserPreferences
 import com.example.reservation_app_frontend.roomDatabase.DatabaseManager
-import com.example.reservation_app_frontend.roomDatabase.ReservationEntity
 import com.example.reservation_app_frontend.screen.navigation.MainScreen
 import com.example.reservation_app_frontend.ui.theme.Reservation_app_frontendTheme
 import com.example.reservation_app_frontend.viewModel.user.LoginViewModel
@@ -82,7 +80,6 @@ class MainActivity : ComponentActivity() {
                     val userViewModel = LoginViewModel.getInstance(userRepo , userPreferences)
 
 
-
                     var startDestination = "Parkings List"
 
                     if ( !userViewModel.isConnected()) {
@@ -90,16 +87,12 @@ class MainActivity : ComponentActivity() {
                     }
 
 
-
                 val navController = rememberNavController()
                     MainScreen( navController , this , startDestination ,  userViewModel ,
                         // appDatabase
 
                )
-                   // MapScreen()
-
                 }
-
 
 
             }

@@ -6,19 +6,13 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -37,7 +31,6 @@ import com.example.reservation_app_frontend.screen.reservation.OneReservation
 import com.example.reservation_app_frontend.screen.reservation.ShowReservationList
 import com.example.reservation_app_frontend.screen.user.LogInScreen
 import com.example.reservation_app_frontend.screen.user.LogoutButton
-import com.example.reservation_app_frontend.screen.user.ShowProfile
 import com.example.reservation_app_frontend.screen.user.SignUpScreen
 import com.example.reservation_app_frontend.screen.user.UserProfileScreen
 import com.example.reservation_app_frontend.viewModel.parking.getParkingsViewModel
@@ -78,6 +71,8 @@ fun MainScreen(
     val reservationviewModel = getMyReservationsViewModel.Factory(reservationRepository).create(getMyReservationsViewModel::class.java)
 
     reservationviewModel.fetchReservations()
+    reservationviewModel.getReservationsOffline()
+
 
     val items = listOf(
         Destination.ShowParkingList,
@@ -107,7 +102,9 @@ fun MainScreen(
                         selected = selected,
                         onClick = {
                             if (des == Destination.ShowReservationList) {
-                                reservationviewModel.fetchReservations() }
+                                reservationviewModel.fetchReservations()
+                                reservationviewModel.getReservationsOffline()
+                            }
                             if (des == Destination.UserProfileScreen) {
                                 Globals.savedUsername?.let { userViewModel.getUser(it) }
                             }

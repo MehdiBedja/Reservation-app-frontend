@@ -7,11 +7,10 @@ import androidx.room.PrimaryKey
 data class ReservationEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val user: Int?,
-  //  val parking_place: Int,
-  //  val entry_datetime: String?,
-   // val exit_datetime: String?,
-   // val payment_status: String?,
-   // val reservation_code: String?,
-   // var isSynced: Boolean = false // Added field for offline insertion tracking
+    val parking_place: String,
+    val entry_datetime: String?,
+    val exit_datetime: String?,
+    var payment_status: String?,
+    val reservation_code: String?
 )
 

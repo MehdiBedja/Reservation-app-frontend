@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.reservation_app_frontend.data.reservation.Reservation
+import com.example.reservation_app_frontend.roomDatabase.ReservationEntity
 import com.example.reservation_app_frontend.screen.navigation.Destination
 import com.example.reservation_app_frontend.viewModel.reservation.getMyReservationsViewModel
 
@@ -52,7 +53,7 @@ fun ShowReservationList(reservationViewModel: getMyReservationsViewModel , navCo
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
-            items(reservationViewModel.reservations) { reservation ->
+            items(reservationViewModel.reservationsentity) { reservation ->
                 ReservationItem(reservation = reservation, navController, reservationViewModel)
                 Spacer(modifier = Modifier.height(16.dp))
             }
@@ -61,7 +62,7 @@ fun ShowReservationList(reservationViewModel: getMyReservationsViewModel , navCo
 }
 
 @Composable
-fun ReservationItem(reservation: Reservation , navController: NavController , reservationViewModel: getMyReservationsViewModel) {
+fun ReservationItem(reservation: ReservationEntity , navController: NavController , reservationViewModel: getMyReservationsViewModel) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -70,6 +71,8 @@ fun ReservationItem(reservation: Reservation , navController: NavController , re
             .background(getShadedColorForReservation(reservation))
             .clickable {
                 reservationViewModel.getReservationById(reservation.id)
+                reservationViewModel.getReservationOffline(reservation.id)
+
 
                 navController.navigate(Destination.oneReservation.createRoute1(reservation.id)) {
                 }
@@ -90,7 +93,7 @@ fun ReservationItem(reservation: Reservation , navController: NavController , re
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "User: ${reservation.user.username}",
+                text = "User: ${reservation.user}",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black
@@ -99,7 +102,7 @@ fun ReservationItem(reservation: Reservation , navController: NavController , re
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Parking Place: ${reservation.parking_place?.id ?: "N/A"}",
+                text = "Parking Place: ${reservation.parking_place ?: "N/A"}",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black
@@ -108,7 +111,16 @@ fun ReservationItem(reservation: Reservation , navController: NavController , re
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Reservation Date: ${reservation.reservation_date}",
+                text = "Reservation date start : ${reservation.entry_datetime}",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = "Reservation date end : ${reservation.exit_datetime}",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black
@@ -136,7 +148,7 @@ fun ReservationItem(reservation: Reservation , navController: NavController , re
 }
 
 @Composable
-fun getShadedColorForReservation(reservation: Reservation): Color {
+fun getShadedColorForReservation(reservation: ReservationEntity): Color {
     val baseColor = when (reservation.payment_status?.lowercase()) {
         "paid" -> Color(0xFFADE772)
         "pending" -> Color(0xFF457BCC)

@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase
         ReservationEntity::class,
     ],
 
-    version = 2, exportSchema = false
+    version = 5, exportSchema = false
 )
 abstract class ParkingDatabase : RoomDatabase() {
     abstract val reservationDao: ReservationDao

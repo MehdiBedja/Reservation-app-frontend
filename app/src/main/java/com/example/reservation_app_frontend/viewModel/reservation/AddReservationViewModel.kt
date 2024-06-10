@@ -5,11 +5,15 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.example.reservation_app_frontend.data.reservation.ReservationDTO
 import com.example.reservation_app_frontend.repository.reservation.ReservationRepository
+import com.example.reservation_app_frontend.roomDatabase.DatabaseManager
+import com.example.reservation_app_frontend.roomDatabase.ReservationEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AddReservationViewModel(private val reservationRepository: ReservationRepository) : ViewModel() {
 
@@ -37,6 +41,14 @@ class AddReservationViewModel(private val reservationRepository: ReservationRepo
             }
         }
 
+    }
+
+    fun insertReservation(reservation: ReservationEntity) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                DatabaseManager.reservationDao.insertReservation(reservation)
+            }
+        }
     }
 
 
