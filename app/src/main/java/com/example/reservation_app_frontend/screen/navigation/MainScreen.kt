@@ -14,6 +14,8 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -63,7 +65,7 @@ fun MainScreen(
 
 
 
-
+    val isConnectedState = remember { mutableStateOf(userViewModel.isConnected()) }
     val endpoint2 = ReservationEndpoint.createEndpoint()
     val reservationRepository by lazy { ReservationRepository(endpoint2
         //    , appDatabase
@@ -84,19 +86,34 @@ fun MainScreen(
 
     Scaffold(
         bottomBar = {
-            NavigationBar  {
+            NavigationBar {
                 val navBackStackEntry = navController.currentBackStackEntryAsState()
                 val currentDestination = navBackStackEntry?.value?.destination
 
+              //  if (isConnectedState.value) {
+
                 items.forEach { des ->
-                    val selected = currentDestination?.hierarchy?.any { it.route == des.route } == true
+                    val selected =
+                        currentDestination?.hierarchy?.any { it.route == des.route } == true
                     NavigationBarItem(
                         icon = {
                             when (des) {
-                                Destination.ShowParkingList -> Icon(Icons.Filled.Menu, contentDescription = null) // Replace with appropriate icon
-                                Destination.ShowReservationList -> Icon(Icons.Filled.List, contentDescription = null) // Replace with appropriate icon
-                                Destination.UserProfileScreen -> Icon(Icons.Filled.Person, contentDescription = null) // Replace with appropriate icon
-                                Destination.AddReservationScreen -> Icon(Icons.Filled.Create, contentDescription = null) // Replace with appropriate icon
+                                Destination.ShowParkingList -> Icon(
+                                    Icons.Filled.Menu,
+                                    contentDescription = null
+                                ) // Replace with appropriate icon
+                                Destination.ShowReservationList -> Icon(
+                                    Icons.Filled.List,
+                                    contentDescription = null
+                                ) // Replace with appropriate icon
+                                Destination.UserProfileScreen -> Icon(
+                                    Icons.Filled.Person,
+                                    contentDescription = null
+                                ) // Replace with appropriate icon
+                                Destination.AddReservationScreen -> Icon(
+                                    Icons.Filled.Create,
+                                    contentDescription = null
+                                ) // Replace with appropriate icon
                                 else -> {}
                             }
                         },
@@ -120,11 +137,11 @@ fun MainScreen(
                             }
 
 
-
                         }
                     )
                 }
             }
+        //    }
         }
     ) { innerPadding ->
         NavHost(navController, startDestination = startDestination, Modifier.padding(innerPadding)) {

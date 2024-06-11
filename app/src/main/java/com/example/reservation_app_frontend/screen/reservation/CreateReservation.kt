@@ -73,7 +73,7 @@ fun AddReservationScreen(
             .joinToString("")
     }
 
-    var reservationCode by rememberSaveable { mutableStateOf(generateRandomCode(5)) }
+    var reservationCode = generateRandomCode(5)
 
     // Reset selected parking place when selected parking changes
     LaunchedEffect(selectedParking) {

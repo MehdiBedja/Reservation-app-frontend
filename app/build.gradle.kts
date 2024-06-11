@@ -79,6 +79,12 @@ dependencies {
 
 
 
+    implementation("androidx.compose.runtime:runtime:1.6.7")
+    implementation("androidx.compose.runtime:runtime-livedata:1.6.7")
+    implementation("androidx.compose.runtime:runtime-rxjava2:1.6.7")
+
+
+
 
 
 

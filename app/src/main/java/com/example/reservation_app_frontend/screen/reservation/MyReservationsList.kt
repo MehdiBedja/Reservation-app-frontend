@@ -23,20 +23,22 @@ import com.example.reservation_app_frontend.screen.navigation.Destination
 import com.example.reservation_app_frontend.viewModel.reservation.getMyReservationsViewModel
 
 @Composable
-fun ShowReservationList(reservationViewModel: getMyReservationsViewModel , navController: NavHostController) {
+fun ShowReservationList(reservationViewModel: getMyReservationsViewModel, navController: NavHostController) {
     AddProgress(reservationViewModel)
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            .background(Color.LightGray)
+            .background(Color(0xFFF5F5F5))
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
-                .background(Color.Gray)
+                .padding(vertical = 16.dp)
+                .background(Color(0xFF6200EE))
+                .padding(16.dp),
+            contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "My Reservations",
@@ -60,29 +62,30 @@ fun ShowReservationList(reservationViewModel: getMyReservationsViewModel , navCo
 }
 
 @Composable
-fun ReservationItem(reservation: ReservationEntity , navController: NavController , reservationViewModel: getMyReservationsViewModel) {
+fun ReservationItem(reservation: ReservationEntity, navController: NavController, reservationViewModel: getMyReservationsViewModel) {
+    val backgroundColor = when (reservation.payment_status?.lowercase()) {
+        "Validated" -> Color(0xFFADE772)
+        "pending" -> Color(0xFFFFEB3B)
+        else -> Color.LightGray
+    }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
-            .clip(RoundedCornerShape(topStart = 20.dp, bottomEnd = 20.dp))
-            .background(getShadedColorForReservation(reservation))
+            .padding(8.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .background(backgroundColor)
             .clickable {
                 reservationViewModel.getReservationById(reservation.id)
                 reservationViewModel.getReservationOffline(reservation.id)
-
-
                 navController.navigate(Destination.oneReservation.createRoute1(reservation.id)) {
                 }
             }
-
+            .padding(16.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-        ) {
+        Column {
             Text(
-                text = "Reservation ID: ${reservation.id}",
+                text = "Reservation code: ${reservation.reservation_code}",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black
@@ -91,59 +94,35 @@ fun ReservationItem(reservation: ReservationEntity , navController: NavControlle
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "User: ${reservation.user}",
+                text = "Location: ${reservation.parking_place ?: "N/A"}",
                 fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.Medium,
                 color = Color.Black
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Parking Place: ${reservation.parking_place ?: "N/A"}",
+                text = "Start: ${reservation.entry_datetime}",
                 fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.Medium,
                 color = Color.Black
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Reservation date start : ${reservation.entry_datetime}",
+                text = "Payment: ${reservation.payment_status}",
                 fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "Reservation date end : ${reservation.exit_datetime}",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "Payment Status: ${reservation.payment_status}",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "Reservation Code: ${reservation.reservation_code}",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.Medium,
                 color = Color.Black
             )
         }
     }
 }
+
+
+
 
 @Composable
 fun getShadedColorForReservation(reservation: ReservationEntity): Color {
