@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
@@ -19,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import com.example.reservation_app_frontend.data.reservation.Reservation
 import com.example.reservation_app_frontend.roomDatabase.ReservationEntity
 import com.example.reservation_app_frontend.screen.navigation.Destination
 import com.example.reservation_app_frontend.viewModel.reservation.getMyReservationsViewModel

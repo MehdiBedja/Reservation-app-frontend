@@ -1,8 +1,9 @@
 package com.example.reservation_app_frontend.screen.reservation
+import android.graphics.Color as AndroidColor
 
-
-import android.content.Context
+import android.graphics.Bitmap
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -22,37 +24,50 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.reservation_app_frontend.endpoint.reservation.ReservationEndpoint
 import com.example.reservation_app_frontend.repository.reservation.ReservationRepository
+import com.example.reservation_app_frontend.screen.navigation.Destination
 import com.example.reservation_app_frontend.viewModel.reservation.getMyReservationsViewModel
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.MultiFormatWriter
+import com.google.zxing.WriterException
+import com.google.zxing.common.BitMatrix
+import com.google.zxing.qrcode.QRCodeWriter
+
 
 @Composable
-fun OneReservation(reservationId: Int?
-    //     , appDatabase: AppDatabase
-) {
-
-
+fun OneReservation(reservationId: Int?) {
     val endpoint = ReservationEndpoint.createEndpoint()
-    val reservationRepository by lazy { ReservationRepository(endpoint
-        //    , appDatabase
-    ) }
+    val reservationRepository by lazy { ReservationRepository(endpoint) }
 
     val reservationViewModel = getMyReservationsViewModel.Factory(reservationRepository).create(getMyReservationsViewModel::class.java)
 
     val reservation by remember { reservationViewModel.reservationoff }
     val isLoading by remember { reservationViewModel.loading }
 
+    var showLoading by remember { mutableStateOf(false) }
+    var showQrCode by remember { mutableStateOf(false) }
+    var qrCodeBitmap by remember { mutableStateOf<Bitmap?>(null) }
+
     LaunchedEffect(Unit) {
         reservationViewModel.getReservationOffline(reservationId) // Start loading
     }
 
+    LaunchedEffect(showLoading) {
+        if (showLoading) {
+            reservationViewModel.updatePaymentStatus(reservationId, "Validated")
+            showLoading = false
+        }
+    }
 
     if (isLoading) {
         AddProgress1(reservationViewModel = reservationViewModel, reservationId = reservationId)
@@ -86,7 +101,6 @@ fun OneReservation(reservationId: Int?
                         text = "Reservation Code: ${it.reservation_code}",
                         style = MaterialTheme.typography.labelMedium
                     )
-                    // You can add more details or customize the layout as needed
 
                     // Payment Status Section
                     Box(
@@ -96,9 +110,9 @@ fun OneReservation(reservationId: Int?
                         contentAlignment = Alignment.Center
                     ) {
                         val paymentStatusColor = when (it.payment_status) {
-                            "validated" -> MaterialTheme.colorScheme.primary // Green color for validated
-                            "pending" -> MaterialTheme.colorScheme.secondary // Orange color for pending
-                            else -> MaterialTheme.colorScheme.error // Red color for other cases
+                            "Validated" -> MaterialTheme.colorScheme.primary
+                            "pending" -> MaterialTheme.colorScheme.secondary
+                            else -> MaterialTheme.colorScheme.error
                         }
                         Column(
                             modifier = Modifier
@@ -116,16 +130,36 @@ fun OneReservation(reservationId: Int?
 
                             Button(
                                 onClick = {
-/*                                    .launch  {
-                                        reservationViewModel.updatePaymentStatus(reservationId, "Validated")
-                                    }*/
+                                    showLoading = true
                                 },
                                 modifier = Modifier.padding(start = 8.dp),
                             ) {
                                 Text(text = "Validate Payment", style = MaterialTheme.typography.labelMedium)
                             }
                         }
+                    }
 
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // QR Code Section
+                    Button(
+                        onClick = {
+                            showQrCode = true
+                            qrCodeBitmap = it.reservation_code?.let { it1 -> generateQrCode(it1) }
+                        },
+                        modifier = Modifier.padding(start = 8.dp),
+                    ) {
+                        Text(text = "Show QR Code", style = MaterialTheme.typography.labelMedium)
+                    }
+
+                    if (showQrCode && qrCodeBitmap != null) {
+                        Image(
+                            bitmap = qrCodeBitmap!!.asImageBitmap(),
+                            contentDescription = "QR Code",
+                            modifier = Modifier
+                                .size(200.dp)
+                                .padding(top = 16.dp)
+                        )
                     }
                 }
             }
@@ -152,4 +186,22 @@ fun AddProgress1(reservationViewModel: getMyReservationsViewModel, reservationId
             CircularProgressIndicator()
         }
     }
+}
+
+fun generateQrCode(text: String): Bitmap? {
+    val width = 512
+    val height = 512
+    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    val writer = MultiFormatWriter()
+    try {
+        val matrix = writer.encode(text, BarcodeFormat.QR_CODE, width, height)
+        for (x in 0 until width) {
+            for (y in 0 until height) {
+                bitmap.setPixel(x, y, if (matrix[x, y]) android.graphics.Color.BLACK else android.graphics.Color.WHITE)
+            }
+        }
+    } catch (e: WriterException) {
+        e.printStackTrace()
+    }
+    return bitmap
 }

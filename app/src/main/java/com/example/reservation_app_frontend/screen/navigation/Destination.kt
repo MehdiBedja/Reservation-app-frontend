@@ -9,7 +9,7 @@ sealed class Destination(val route : String) {
     object ShowReservationList:Destination ("My Reservations")
     object AddReservationScreen:Destination ("add reservation")
     object oneReservation:Destination ("d/{reservationId}")  {
-        fun createRoute1(reservationId:Int) = "d/$reservationId"
+        fun createRoute1(reservationId: Int?) = "d/$reservationId"
     }
     object UserProfileScreen:Destination ("My Profile")
 

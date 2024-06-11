@@ -292,7 +292,7 @@ fun AddReservationScreen(
         timepicker(
             initialTime = LocalTime.NOON,
             title = "Pick a time",
-            timeRange = LocalTime.MIDNIGHT..LocalTime.NOON
+            timeRange =  LocalTime.MIDNIGHT..LocalTime.of(23, 0)
         ) {
             pickedTime = it
         }
@@ -344,7 +344,9 @@ fun AddReservationScreen(
                     entry_datetime = formattedDate + formattedDate , // Example valid datetime format
                     exit_datetime = formattedDate + formattedDate, // Example valid datetime format
                     payment_status = paymentStatus,
-                    reservation_code = reservationCode
+                    reservation_code = reservationCode ,
+                    date = pickedDate,
+                    time = pickedTime
                 )
 
                 addReservationViewModel.insertReservation(reservationEntity)

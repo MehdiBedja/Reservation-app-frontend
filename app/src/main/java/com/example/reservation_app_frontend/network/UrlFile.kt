@@ -2,7 +2,7 @@ package com.example.reservation_app_frontend.network
 
 import android.content.Context
 
-const val url = "https://1b4b-154-121-88-245.ngrok-free.app/"
+const val url = "https://a9d8-154-121-31-63.ngrok-free.app/"
 
 
 object Globals {

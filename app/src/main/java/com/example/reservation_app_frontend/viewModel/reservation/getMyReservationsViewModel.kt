@@ -16,6 +16,8 @@ import com.example.reservation_app_frontend.roomDatabase.DatabaseManager
 import com.example.reservation_app_frontend.roomDatabase.ReservationEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -33,6 +35,13 @@ class getMyReservationsViewModel(private val reservationRepository: ReservationR
     var loading1off = mutableStateOf(false)
     val error1off = mutableStateOf<String?>(null)
 
+
+
+
+
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean> get() = _isRefreshing
+    
     fun fetchReservations() {
         loading.value = true // Set loading to true before fetching data
         error.value = null // Clear any previous error messages
@@ -92,18 +101,19 @@ class getMyReservationsViewModel(private val reservationRepository: ReservationR
     }
 
       @SuppressLint("SuspiciousIndentation")
-      suspend  fun updatePaymentStatus(reservationId: Int?, status : String?) {
-        reservationoff.value?.payment_status = "Validated"
+      suspend fun updatePaymentStatus(reservationId: Int?, status: String?) {
+          reservationId?.let { id ->
+              status?.let { newStatus ->
+                  DatabaseManager.reservationDao.updatePaymentStatus1(id, newStatus)
+                  // Refresh the reservationoff state after updating the payment status
+                  withContext(Dispatchers.IO) {
+                      reservationoff.value = DatabaseManager.reservationDao.getReservationOffline(id)
+                  }
+              }
+          }
+      }
 
-        // Update the payment status using the DAO query
 
-            if (reservationId != null) {
-                if (status != null) {
-                    DatabaseManager.reservationDao.updatePaymentStatus1(reservationId , status)
-                }
-            }
-
-    }
 
 
     // Function to select payment status
