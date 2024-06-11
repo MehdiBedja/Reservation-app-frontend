@@ -37,9 +37,9 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun AddReservationScreen(
     getAllReservationsViewModel: getAllReservationModel,
-    addReservationViewModel: AddReservationViewModel ,
-    context: Context ,
-    reservationviewModel : getMyReservationsViewModel,
+    addReservationViewModel: AddReservationViewModel,
+    context: Context,
+    reservationviewModel: getMyReservationsViewModel,
     navController: NavHostController
 ) {
     var isContextMenuVisible by rememberSaveable {
@@ -58,12 +58,13 @@ fun AddReservationScreen(
     var showParkingsList by remember { mutableStateOf(false) }
     var showParkingPlacesList by remember { mutableStateOf(false) }
 
-
     var paymentStatus by rememberSaveable { mutableStateOf("pending") }
 
+    val dateDialogState1 = rememberMaterialDialogState()
+    val timeDialogState1 = rememberMaterialDialogState()
 
-    val dateDialogState = rememberMaterialDialogState()
-    val timeDialogState = rememberMaterialDialogState()
+    val dateDialogState2 = rememberMaterialDialogState()
+    val timeDialogState2 = rememberMaterialDialogState()
 
     fun generateRandomCode(length: Int): String {
         val allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
@@ -71,7 +72,6 @@ fun AddReservationScreen(
             .map { allowedChars.random() }
             .joinToString("")
     }
-
 
     var reservationCode by rememberSaveable { mutableStateOf(generateRandomCode(5)) }
 
@@ -85,7 +85,6 @@ fun AddReservationScreen(
             .padding(16.dp)
             .fillMaxSize()
             .padding(horizontal = 16.dp, vertical = 50.dp),
-
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -204,133 +203,59 @@ fun AddReservationScreen(
             }
         }
 
-
-        // Make Reservation button
-
-
-    }
-
-    var pickedDate by remember {
-        mutableStateOf(LocalDate.now())
-    }
-    var pickedTime by remember {
-        mutableStateOf(LocalTime.NOON)
-    }
-    val formattedDate by remember {
-        derivedStateOf {
-            DateTimeFormatter
-                .ofPattern("MMM dd yyyy")
-                .format(pickedDate)
+        // Date and Time pickers
+        var pickedDate1 by remember {
+            mutableStateOf(LocalDate.now())
         }
-    }
-    val formattedTime by remember {
-        derivedStateOf {
-            DateTimeFormatter
-                .ofPattern("hh:mm")
-                .format(pickedTime)
+        var pickedTime1 by remember {
+            mutableStateOf(LocalTime.NOON)
         }
-    }
-
-
-
-
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Button(onClick = {
-            dateDialogState.show()
-        }) {
-            Text(text = "Pick date")
+        var pickedDate2 by remember {
+            mutableStateOf(LocalDate.now())
         }
-        Text(text = formattedDate)
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = {
-            timeDialogState.show()
-        }) {
-            Text(text = "Pick time")
+        var pickedTime2 by remember {
+            mutableStateOf(LocalTime.NOON)
         }
-        Text(text = formattedTime)
 
-    MaterialDialog(
-        dialogState = dateDialogState,
-        buttons = {
-            positiveButton(text = "Ok") {
-                Toast.makeText(
-                    context,
-                    "Clicked ok",
-                    Toast.LENGTH_LONG
-                ).show()
+        val formattedDate1 by remember {
+            derivedStateOf {
+                DateTimeFormatter
+                    .ofPattern("MMM dd yyyy")
+                    .format(pickedDate1)
             }
-            negativeButton(text = "Cancel")
         }
-    ) {
-        datepicker(
-            initialDate = LocalDate.now(),
-            title = "Pick a date",
-
-            ) {
-            pickedDate = it
-        }
-    }
-    MaterialDialog(
-        dialogState = timeDialogState,
-        buttons = {
-            positiveButton(text = "Ok") {
-                Toast.makeText(
-                    context,
-                    "Clicked ok",
-                    Toast.LENGTH_LONG
-                ).show()
+        val formattedTime1 by remember {
+            derivedStateOf {
+                DateTimeFormatter
+                    .ofPattern("hh:mm a")
+                    .format(pickedTime1)
             }
-            negativeButton(text = "Cancel")
         }
-    ) {
-        timepicker(
-            initialTime = LocalTime.NOON,
-            title = "Pick a time",
-            timeRange =  LocalTime.MIDNIGHT..LocalTime.of(23, 0)
-        ) {
-            pickedTime = it
+        val formattedDate2 by remember {
+            derivedStateOf {
+                DateTimeFormatter
+                    .ofPattern("MMM dd yyyy")
+                    .format(pickedDate2)
+            }
         }
-    }
+        val formattedTime2 by remember {
+            derivedStateOf {
+                DateTimeFormatter
+                    .ofPattern("hh:mm a")
+                    .format(pickedTime2)
+            }
+        }
 
-
-
-
-
-
-
-
-
-
-
-
-}
-
-
-
-
-
-
-    val userId = savedUsername
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp, vertical = 200.dp),
-        contentAlignment = Alignment.BottomCenter
-    ) {
+        // Button to make reservation at the top
+        val userId = savedUsername
         Button(
             onClick = {
                 val reservationDTO = ReservationDTO(
                     user = userId, // Assuming you have a userId variable
                     parking_place = selectedParkingPlace?.id
                         ?: -1, // Default to -1 if selectedParkingPlace is null
-                    entry_datetime = formattedDate + formattedDate, // Example valid datetime format
-                    exit_datetime = formattedDate + formattedDate, // Example valid datetime format
+                    entry_datetime = formattedDate1 + formattedTime1, // Example valid datetime format
+                    exit_datetime = formattedDate2 + formattedTime2, // Example valid datetime format
                     payment_status = paymentStatus,
                     reservation_code = reservationCode
                 )
@@ -340,19 +265,18 @@ fun AddReservationScreen(
 
                 val reservationEntity = ReservationEntity(
                     user = userId, // Assuming you have a userId variable
-                    parking_place = selectedParkingPlace?.attributes ?:"default",  // Default to -1 if selectedParkingPlace is null
-                    entry_datetime = formattedDate + formattedDate , // Example valid datetime format
-                    exit_datetime = formattedDate + formattedDate, // Example valid datetime format
+                    parking_place = selectedParkingPlace?.attributes
+                        ?: "default",  // Default to -1 if selectedParkingPlace is null
+                    entry_datetime = formattedDate1 + formattedTime1, // Example valid datetime format
+                    exit_datetime = formattedDate2 + formattedTime2, // Example valid datetime format
                     payment_status = paymentStatus,
-                    reservation_code = reservationCode ,
-                    date = pickedDate,
-                    time = pickedTime
+                    reservation_code = reservationCode,
+                    date = pickedDate2,
+                    time = pickedTime2
                 )
 
                 addReservationViewModel.insertReservation(reservationEntity)
                 reservationviewModel.getReservationsOffline()
-
-
             },
             modifier = Modifier
                 .padding(vertical = 8.dp)
@@ -360,7 +284,129 @@ fun AddReservationScreen(
         ) {
             Text(text = "Make Reservation", fontSize = 14.sp) // Adjust fontSize as needed
         }
+
+        // Date and Time pickers section
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            // First set of date and time pickers
+            Button(onClick = {
+                dateDialogState1.show()
+            }) {
+                Text(text = "Pick the entry date")
+            }
+            Text(text = formattedDate1)
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = {
+                timeDialogState1.show()
+            }) {
+                Text(text = "Pick the entry time")
+            }
+            Text(text = formattedTime1)
+
+            // Second set of date and time pickers
+            Spacer(modifier = Modifier.height(32.dp))
+            Button(onClick = {
+                dateDialogState2.show()
+            }) {
+                Text(text = "Pick the exit date")
+            }
+            Text(text = formattedDate2)
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = {
+                timeDialogState2.show()
+            }) {
+                Text(text = "Pick the exit time")
+            }
+            Text(text = formattedTime2)
+        }
+
+        // MaterialDialogs
+        MaterialDialog(
+            dialogState = dateDialogState1,
+            buttons = {
+                positiveButton(text = "Ok") {
+                    Toast.makeText(
+                        context,
+                        "Clicked ok",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                negativeButton(text = "Cancel")
+            }
+        ) {
+            datepicker(
+                initialDate = LocalDate.now(),
+                title = "Pick the entry date",
+            ) {
+                pickedDate1 = it
+            }
+        }
+        MaterialDialog(
+            dialogState = timeDialogState1,
+            buttons = {
+                positiveButton(text = "Ok") {
+                    Toast.makeText(
+                        context,
+                        "Clicked ok",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                negativeButton(text = "Cancel")
+            }
+        ) {
+            timepicker(
+                initialTime = LocalTime.NOON,
+                title = "Pick the entry time",
+                timeRange = LocalTime.MIDNIGHT..LocalTime.of(23, 0)
+            ) {
+                pickedTime1 = it
+            }
+        }
+
+        MaterialDialog(
+            dialogState = dateDialogState2,
+            buttons = {
+                positiveButton(text = "Ok") {
+                    Toast.makeText(
+                        context,
+                        "Clicked ok",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                negativeButton(text = "Cancel")
+            }
+        ) {
+            datepicker(
+                initialDate = LocalDate.now(),
+                title = "Pick the exit date",
+            ) {
+                pickedDate2 = it
+            }
+        }
+        MaterialDialog(
+            dialogState = timeDialogState2,
+            buttons = {
+                positiveButton(text = "Ok") {
+                    Toast.makeText(
+                        context,
+                        "Clicked ok",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                negativeButton(text = "Cancel")
+            }
+        ) {
+            timepicker(
+                initialTime = LocalTime.NOON,
+                title = "Pick the exit time",
+                timeRange = LocalTime.MIDNIGHT..LocalTime.of(23, 0)
+            ) {
+                pickedTime2 = it
+            }
+        }
     }
-
-
 }

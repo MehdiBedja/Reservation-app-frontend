@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -92,7 +93,7 @@ fun MainScreen(
                     NavigationBarItem(
                         icon = {
                             when (des) {
-                                Destination.ShowParkingList -> Icon(Icons.Filled.Person, contentDescription = null) // Replace with appropriate icon
+                                Destination.ShowParkingList -> Icon(Icons.Filled.Menu, contentDescription = null) // Replace with appropriate icon
                                 Destination.ShowReservationList -> Icon(Icons.Filled.List, contentDescription = null) // Replace with appropriate icon
                                 Destination.UserProfileScreen -> Icon(Icons.Filled.Person, contentDescription = null) // Replace with appropriate icon
                                 Destination.AddReservationScreen -> Icon(Icons.Filled.Create, contentDescription = null) // Replace with appropriate icon
